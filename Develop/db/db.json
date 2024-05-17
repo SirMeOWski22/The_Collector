@@ -1,6 +1,11 @@
 [
-    {
-        "title":"Test Title",
-        "text":"Test text"
-    }
+  {
+    "title": "Test Title",
+    "text": "Test text"
+  },
+  {
+    "id": "e6e1ba69-8160-4b4c-a184-82170e72744f",
+    "title": "Summer is Almost Here!",
+    "text": "I can't wait until tomorrow after school! Summer will begin and all of us teachers can finally be free! I will get to have so much time with my cat, Chase. I also will get to practice coding in peace. Summer is going to be great!"
+  }
 ]

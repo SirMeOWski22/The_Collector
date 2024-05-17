@@ -1,10 +1,9 @@
-const e = require('express');
-
 let noteForm;
 let noteTitle;
 let noteText;
 let saveNoteBtn;
 let newNoteBtn;
+let clearBtn;
 let noteList;
 
 if (window.location.pathname === '/notes') {
@@ -15,11 +14,15 @@ if (window.location.pathname === '/notes') {
   newNoteBtn = document.querySelector('.new-note');
   clearBtn = document.querySelector('.clear-btn');
   noteList = document.querySelector('.list-container .list-group');
+
+  // Event listener for handling changes in input fields
+  noteForm.addEventListener('input', handleRenderBtns);
 }
 
 const show = (elem) => {
   elem.style.display = 'inline';
 };
+
 const hide = (elem) => {
   elem.style.display = 'none';
 };
@@ -110,45 +113,43 @@ const handleRenderBtns = () => {
 const renderNoteList = async (notes) => {
   const jsonNotes = await notes.json();
   noteList.innerHTML = '';
-};
 
-const noteListItems = [];
+  const noteListItems = [];
 
-const createLi = (text, delBtn = true) => {
-  const liEl = document.createElement('li');
-  liEl.classList.add('list-group-item');
+  const createLi = (text, delBtn = true) => {
+    const liEl = document.createElement('li');
+    liEl.classList.add('list-group-item');
 
-  const spanEl = document.createElement('span');
-  spanEl.classList.add('list-item-title');
-  spanEl.innerText = text;
-  spanEl.addEventListener('click', handleNoteView);
+    const spanEl = document.createElement('span');
+    spanEl.classList.add('list-item-title');
+    spanEl.innerText = text;
+    spanEl.addEventListener('click', handleNoteView);
 
-  liEl.append(spanEl);
+    liEl.append(spanEl);
 
-  if (delBtn) {
-    const delBtnEl = document.createElement('i');
-    delBtnEl.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
-    delBtnEl.addEventListener('click', handleNoteDelete);
+    if (delBtn) {
+      const delBtnEl = document.createElement('i');
+      delBtnEl.classList.add('fas', 'fa-trash-alt', 'float-right', 'text-danger', 'delete-note');
+      delBtnEl.addEventListener('click', handleNoteDelete);
 
-    liEl.append(delBtnEl);
+      liEl.append(delBtnEl);
+    }
+
+    return liEl;
+  };
+
+  if (jsonNotes.length === 0) {
+    noteListItems.push(createLi('No Saved Notes', false));
   }
 
-  return liEl;
-};
+  jsonNotes.forEach((note) => {
+    const li = createLi(note.title);
+    li.dataset.note = JSON.stringify(note);
+    noteListItems.push(li);
+  });
 
-if (jsonNotes.length === 0) {
-  noteListItems.push(createLi('No Saved Notes', false));
-}
-
-jsonNotes.forEach((note) => {
-  const li = createLi(note.title);
-  li.dataset.note = JSON.stringify(note);
-  noteListItems.push(li);
-});
-
-if (window.location.pathname === '/notes') {
   noteListItems.forEach((note) => noteList.append(note));
-}
+};
 
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
@@ -156,7 +157,6 @@ if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);
   clearBtn.addEventListener('click', renderActiveNote);
-  noteForm.addEventListener('click', handleRenderBtns);
 }
 
 getAndRenderNotes();
